@@ -87,7 +87,7 @@ module InPlaceMacrosHelper
     field = tag.to_content_tag(tag_options.delete(:tag), tag_options)
     match = field.match(%r{(<span.*?>)(.*?)(</span>)}m)
     if match[2].blank?
-      field = "#{match[1]}#{in_place_editor_options[:if_blank_text]}#{match[3]}"
+      field = "#{match[1]}#{in_place_editor_options[:text_if_blank]}#{match[3]}"
     end
 
     field + in_place_editor(tag_options[:id], in_place_editor_options)
