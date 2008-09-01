@@ -10,5 +10,7 @@ Example:
 
   # View
   <%= in_place_editor_field :post, 'title' %>
+  or
+  <%= in_place_editor_field @post, 'title' %>
 
 Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license  
