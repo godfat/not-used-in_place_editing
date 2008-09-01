@@ -69,10 +69,27 @@ module InPlaceMacrosHelper
   
   # Renders the value of the specified object and method with in-place editing capabilities.
   def in_place_editor_field(object, method, tag_options = {}, in_place_editor_options = {})
-    tag = ::ActionView::Helpers::InstanceTag.new(object, method, self)
-    tag_options = {:tag => "span", :id => "#{object}_#{method}_#{tag.object.id}_in_place_editor", :class => "in_place_editor_field"}.merge!(tag_options)
-    in_place_editor_options[:url] = in_place_editor_options[:url] || url_for({ :action => "set_#{object}_#{method}", :id => tag.object.id })
-    tag.to_content_tag(tag_options.delete(:tag), tag_options) +
-    in_place_editor(tag_options[:id], in_place_editor_options)
+    if object.kind_of?(::ActiveRecord::Base)
+      name = object.class.to_s.downcase
+      tag = ::ActionView::Helpers::InstanceTag.new(name, method, self, nil, object)
+    else
+      name = object
+      tag = ::ActionView::Helpers::InstanceTag.new(name, method, self)
+    end
+
+    tag_options = {:tag => "span", :id => "#{name}_#{method}_#{tag.object.id}_in_place_editor",
+                   :class => "in_place_editor_field"}.merge!(tag_options)
+
+    in_place_editor_options[:url] = in_place_editor_options[:url] ||
+                                    url_for(:action => "set_#{name}_#{method}",
+                                            :id => tag.object.id)
+
+    field = tag.to_content_tag(tag_options.delete(:tag), tag_options)
+    match = field.match(%r{(<span.*?>)(.*?)(</span>)}m)
+    if match[2].blank?
+      field = "#{match[1]}#{in_place_editor_options[:if_blank_text]}#{match[3]}"
+    end
+
+    field + in_place_editor(tag_options[:id], in_place_editor_options)
   end
 end
