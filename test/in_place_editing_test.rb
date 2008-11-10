@@ -9,6 +9,8 @@ class InPlaceEditingTest < Test::Unit::TestCase
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::FormHelper
   include ActionView::Helpers::CaptureHelper
+
+  include ActionView::Helpers::SanitizeHelper
   
   def setup
     @controller = Class.new do
@@ -30,17 +32,17 @@ class InPlaceEditingTest < Test::Unit::TestCase
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nnew Ajax.InPlaceEditor('some_input', 'http://www.example.com/inplace_edit', {externalControl:'blah'})\n//]]>\n</script>),
         in_place_editor('some_input', {:url => {:action => 'inplace_edit'}, :external_control => 'blah'})
   end
-  
+
   def test_in_place_editor_size
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nnew Ajax.InPlaceEditor('some_input', 'http://www.example.com/inplace_edit', {size:4})\n//]]>\n</script>),
         in_place_editor('some_input', {:url => {:action => 'inplace_edit'}, :size => 4})
   end
-  
+
   def test_in_place_editor_cols_no_rows
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nnew Ajax.InPlaceEditor('some_input', 'http://www.example.com/inplace_edit', {cols:4})\n//]]>\n</script>),
         in_place_editor('some_input', {:url => {:action => 'inplace_edit'}, :cols => 4})
   end
-  
+
   def test_in_place_editor_cols_with_rows
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nnew Ajax.InPlaceEditor('some_input', 'http://www.example.com/inplace_edit', {cols:40, rows:5})\n//]]>\n</script>),
         in_place_editor('some_input', {:url => {:action => 'inplace_edit'}, :rows => 5, :cols => 40})
@@ -50,26 +52,26 @@ class InPlaceEditingTest < Test::Unit::TestCase
       assert_dom_equal %(<script type=\"text/javascript\">\n//<![CDATA[\nnew Ajax.InPlaceEditor('some_input', 'http://www.example.com/inplace_edit', {loadingText:'Why are we waiting?'})\n//]]>\n</script>),
         in_place_editor('some_input', {:url => {:action => 'inplace_edit'}, :loading_text => 'Why are we waiting?'})
   end
-  
+
   def test_in_place_editor_url
     assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value')",
-    in_place_editor( 'id-goes-here', :url => { :action => "action_to_set_value" })    
+    in_place_editor( 'id-goes-here', :url => { :action => "action_to_set_value" })
   end
-  
+
   def test_in_place_editor_load_text_url
     assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {loadTextURL:'http://www.example.com/action_to_get_value'})",
     in_place_editor( 'id-goes-here', 
       :url => { :action => "action_to_set_value" }, 
       :load_text_url => { :action => "action_to_get_value" })
   end
-  
+
   def test_in_place_editor_html_response
     assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {htmlResponse:false})",
     in_place_editor( 'id-goes-here', 
       :url => { :action => "action_to_set_value" }, 
       :script => true )
   end
-  
+
   def form_authenticity_token
     "authenticity token"
   end
@@ -85,5 +87,25 @@ class InPlaceEditingTest < Test::Unit::TestCase
     in_place_editor( 'id-goes-here',
       :url => { :action => "action_to_set_value" },
       :text_between_controls => "or" )
+  end
+
+  def test_no_tags
+    input = in_place_editor_field(User.new('<a href="/">asd</a>'), :title)
+    assert_equal('<span class="in_place_editor_field" id="user_title_123_in_place_editor">asd</span><script type="text/javascript">
+//<![CDATA[
+new Ajax.InPlaceEditor(\'user_title_123_in_place_editor\', \'http://www.example.com/set_user_title\')
+//]]>
+</script>', input)
+  end
+end
+
+# fake...
+class User < ActiveRecord::Base
+  attr_accessor :title
+  def initialize new_title
+    self.title = new_title
+  end
+  def id
+    '123'
   end
 end

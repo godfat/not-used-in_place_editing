@@ -84,7 +84,11 @@ module InPlaceMacrosHelper
                                     url_for(:action => "set_#{name}_#{method}",
                                             :id => tag.object.id)
 
-    field = tag.to_content_tag(tag_options.delete(:tag), tag_options)
+    field = tag.to_content_tag(tag_options.delete(:tag), tag_options).
+              # strip tags
+              gsub(%r{(<span.*?>)(.*?)(</span>)}m){
+                "#{$1}#{strip_tags($2)}#{$3}"
+              }
     match = field.match(%r{(<span.*?>)(.*?)(</span>)}m)
     if match[2].blank?
       field = "#{match[1]}#{in_place_editor_options[:text_if_blank]}#{match[3]}"
