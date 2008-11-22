@@ -11,7 +11,8 @@ class InPlaceEditingTest < Test::Unit::TestCase
   include ActionView::Helpers::CaptureHelper
 
   include ActionView::Helpers::SanitizeHelper
-  
+  extend ActionView::Helpers::SanitizeHelper::ClassMethods
+
   def setup
     @controller = Class.new do
       def url_for(options)

@@ -71,7 +71,7 @@ module InPlaceMacrosHelper
   def in_place_editor_field(object, method, tag_options = {}, in_place_editor_options = {})
     if object.kind_of?(::ActiveRecord::Base)
       name = object.class.to_s.underscore
-      tag = ::ActionView::Helpers::InstanceTag.new(name, method, self, nil, object)
+      tag = ::ActionView::Helpers::InstanceTag.new(name, method, self, object)
     else
       name = object
       tag = ::ActionView::Helpers::InstanceTag.new(name, method, self)
