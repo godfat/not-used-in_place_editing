@@ -15,4 +15,4 @@ Example:
   or
   <%= in_place_editor_field @post, 'title', {}, :text_if_blank => 'click here to edit' %>
 
-Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license  
+Copyright (c) 2007 David Heinemeier Hansson, released under the MIT license

@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + "/test_helper")
 class InPlaceEditingTest < Test::Unit::TestCase
   include InPlaceEditing
   include InPlaceMacrosHelper
-  
+
   include ActionView::Helpers::UrlHelper
   include ActionView::Helpers::TagHelper
   include ActionView::Helpers::TextHelper
@@ -61,15 +61,15 @@ class InPlaceEditingTest < Test::Unit::TestCase
 
   def test_in_place_editor_load_text_url
     assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {loadTextURL:'http://www.example.com/action_to_get_value'})",
-    in_place_editor( 'id-goes-here', 
-      :url => { :action => "action_to_set_value" }, 
+    in_place_editor( 'id-goes-here',
+      :url => { :action => "action_to_set_value" },
       :load_text_url => { :action => "action_to_get_value" })
   end
 
   def test_in_place_editor_html_response
     assert_match "Ajax.InPlaceEditor('id-goes-here', 'http://www.example.com/action_to_set_value', {htmlResponse:false})",
-    in_place_editor( 'id-goes-here', 
-      :url => { :action => "action_to_set_value" }, 
+    in_place_editor( 'id-goes-here',
+      :url => { :action => "action_to_set_value" },
       :script => true )
   end
 
