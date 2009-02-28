@@ -16,6 +16,10 @@ module InPlaceEditing
   module ClassMethods
     def in_place_edit_for(object, attribute, options = {})
       define_method("set_#{object}_#{attribute}") do
+        unless [:post, :put].include?(request.method)
+          return render(:text => 'Method not allowed', :status => 405)
+        end
+
         @item = object.to_s.camelize.constantize.find(params[:id])
         # update even if params[:value] is blank string but not nil
         # update if no block given or check should we update with the block
